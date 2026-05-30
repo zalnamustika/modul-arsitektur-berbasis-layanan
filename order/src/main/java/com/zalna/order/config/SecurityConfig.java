@@ -33,9 +33,10 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/orders/products",
-                    "/orders/products/**"
+                    "/orders/products/**",
+                    "/actuator/**"
                 ).permitAll()
-                .requestMatchers("/orders/**").authenticated()
+                .requestMatchers("/orders/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

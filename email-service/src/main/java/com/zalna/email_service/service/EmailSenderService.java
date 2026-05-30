@@ -25,7 +25,7 @@ public class EmailSenderService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(to);
-            helper.setSubject("Konfirmasi Pesanan Anda");
+            helper.setSubject("Konfirmasi Pesanan Anda"); 
 
             String html =
                 "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;'>" +

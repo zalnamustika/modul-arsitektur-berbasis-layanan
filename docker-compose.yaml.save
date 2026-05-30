@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # ==================== DATABASE SERVICES ====================
@@ -168,8 +168,6 @@ services:
   email-service:
     build: ./email-service
     container_name: email-service
-    ports:
-      - "8084:8084"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_RABBITMQ_HOST=rabbitmq
@@ -210,83 +208,28 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
-      - "9091:9090"
+      - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-    depends_on:
-      - eureka-server
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - microservices-network
+    profiles:
+      - monitoring
 
   # Grafana
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-data:/var/lib/grafana
-    depends_on:
-      - prometheus
     networks:
       - microservices-network
-
-  # ==================== ELK STACK LOGGING ====================
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    networks:
-      - microservices-network
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.24
-    container_name: logstash
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline
-    depends_on:
-      - elasticsearch
-    networks:
-      - microservices-network
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.24
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
-    networks:
-      - microservices-network
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.17.24
-    container_name: filebeat
-    user: root
-    volumes:
-      - ./elk/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - logstash
-    networks:
-      - microservices-network
+    profiles:
+      - monitoring
 
 # ==================== NETWORKS & VOLUMES ====================
 
@@ -300,4 +243,3 @@ volumes:
   mysql-product-data:
   rabbitmq-data:
   grafana-data:
-  elasticsearch-data:

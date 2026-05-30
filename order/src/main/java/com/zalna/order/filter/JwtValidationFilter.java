@@ -18,7 +18,7 @@ import java.io.IOException;
 public class JwtValidationFilter extends OncePerRequestFilter {
 
     private final RestTemplate plainRestTemplate = new RestTemplate();
-    private final String AUTH_SERVICE_URL = "http://localhost:8085";
+    private final String AUTH_SERVICE_URL = "http://auth-service:8081";
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
