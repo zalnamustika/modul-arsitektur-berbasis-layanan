@@ -17,8 +17,12 @@ import java.io.IOException;
 @Component
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-    private final RestTemplate plainRestTemplate = new RestTemplate();
-    private final String AUTH_SERVICE_URL = "http://auth-service:8081";
+    private final RestTemplate restTemplate;
+    private final String AUTH_SERVICE_URL = "http://AUTH-SERVICE";
+
+    public JwtValidationFilter(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -55,7 +59,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
                 System.out.println("Validating token ke: " + AUTH_SERVICE_URL + "/api/auth/validate");
 
-                ResponseEntity<Boolean> validationResponse = plainRestTemplate.exchange(
+                ResponseEntity<Boolean> validationResponse = restTemplate.exchange(
                     AUTH_SERVICE_URL + "/api/auth/validate",
                     HttpMethod.POST,
                     entity,
